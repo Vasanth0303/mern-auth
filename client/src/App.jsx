@@ -12,6 +12,8 @@ import VerifyResetOtp from "./pages/VerifyResetOtp";
 import NewPassword from "./pages/NewPassword";
 
 
+
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -39,6 +41,7 @@ function App() {
         <Route path="/verified-success" element={<VerifiedSuccess />} />
         <Route path="/verify-reset" element={<VerifyResetOtp />} />
         <Route path="/new-password" element={<NewPassword />} />
+        
 
       </Routes>
     </>
