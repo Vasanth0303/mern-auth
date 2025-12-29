@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,        // ✅ allow Render + mobile
     credentials: true,
   })
 );
@@ -28,7 +28,8 @@ app.use(
 // ROUTES
 app.use("/api/auth", authRoutes);
 
-// START SERVER
-app.listen(process.env.PORT, () => {
-  console.log(`🚀 Server running on port ${process.env.PORT}`);
+// START SERVER (RENDER SAFE)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
