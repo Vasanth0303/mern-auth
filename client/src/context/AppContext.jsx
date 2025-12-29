@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import api from "../api";
 
 export const AppContext = createContext();
@@ -8,62 +8,46 @@ export const AppContextProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
-  // =========================
-  // CHECK AUTH STATUS
-  // =========================
+  // 🔐 CHECK AUTH
   const checkAuth = async () => {
     try {
-      const { data } = await api.get("/is-auth");
+      const res = await api.get("/is-auth");
 
-      if (data.success) {
+      if (res.data.success) {
         setIsLoggedin(true);
-        await getUserData();
+
+        // fetch user ONLY if auth is valid
+        const userRes = await api.get("/data");
+        if (userRes.data.success) {
+          setUserData(userRes.data.user);
+        } else {
+          setUserData(null);
+        }
       } else {
         setIsLoggedin(false);
         setUserData(null);
       }
-    } catch (error) {
+    } catch (err) {
       setIsLoggedin(false);
       setUserData(null);
     } finally {
-      setLoadingUser(false); // 🔥 ALWAYS stop loading
+      // 🔴 CRITICAL FIX
+      setLoadingUser(false);
     }
   };
 
-  // =========================
-  // GET USER DATA
-  // =========================
-  const getUserData = async () => {
-    try {
-      const { data } = await api.get("/data");
-
-      if (data.success) {
-        setUserData(data.user);
-      } else {
-        setUserData(null);
-      }
-    } catch (error) {
-      setUserData(null);
-    }
-  };
-
-  // =========================
-  // LOGOUT
-  // =========================
+  // 🚪 LOGOUT
   const logout = async () => {
     try {
-      await api.post("/logout");
-    } catch (error) {
-      console.log("Logout failed");
+      await api.get("/logout"); // GET matches backend
+    } catch (err) {
+      console.log("Logout error");
     } finally {
       setIsLoggedin(false);
       setUserData(null);
     }
   };
 
-  // =========================
-  // RUN ON APP LOAD
-  // =========================
   useEffect(() => {
     checkAuth();
   }, []);
@@ -75,8 +59,6 @@ export const AppContextProvider = ({ children }) => {
         userData,
         loadingUser,
         logout,
-        setIsLoggedin,
-        getUserData,
       }}
     >
       {children}

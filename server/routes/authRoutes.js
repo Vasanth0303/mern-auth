@@ -20,11 +20,13 @@ const router = express.Router();
 // AUTH
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/logout", logoutUser);
+
+// 🔴 FIX: logout MUST be GET (frontend/browser hits GET)
+router.get("/logout", logoutUser);
 
 // USER
 router.get("/is-auth", userAuth, isAuth);
-router.get("/me", userAuth, getUserData);
+router.get("/data", userAuth, getUserData);
 
 // EMAIL VERIFY (NEEDS LOGIN)
 router.post("/send-verify-otp", userAuth, sendVerifyOtp);
