@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import api from "../api";
+import api from "../api.js";
 
 export const AppContext = createContext();
 
