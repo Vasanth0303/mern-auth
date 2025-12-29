@@ -20,9 +20,7 @@ const router = express.Router();
 // AUTH
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-
-// 🔴 FIX: logout MUST be GET (frontend/browser hits GET)
-router.get("/logout", logoutUser);
+router.post("/logout", logoutUser);
 
 // USER
 router.get("/is-auth", userAuth, isAuth);
