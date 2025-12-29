@@ -21,7 +21,7 @@ app.use(cookieParser());
 // ✅ IMPORTANT FIX
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // EXACT frontend URL
+    origin: "https://mern-auth-frontend-pm2q.onrender.com", // EXACT frontend URL
     credentials: true,
   })
 );
