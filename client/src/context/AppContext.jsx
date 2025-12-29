@@ -1,54 +1,21 @@
-import React, { createContext, useEffect, useState } from "react";
-import api from "../api.js";
+import React, { createContext, useState } from "react";
 
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingUser, setLoadingUser] = useState(false);
 
-  const checkAuth = async () => {
-    try {
-      const { data } = await api.get("/is-auth");
-
-      if (data.success) {
-        setIsLoggedin(true);
-        await getUserData();
-      } else {
-        setIsLoggedin(false);
-      }
-    } catch (err) {
-      setIsLoggedin(false);
-    } finally {
-      setLoadingUser(false);
-    }
+  const loginSuccess = (user) => {
+    setIsLoggedin(true);
+    setUserData(user);
   };
 
-  const getUserData = async () => {
-    try {
-      const { data } = await api.get("/data");
-      if (data.success) {
-        setUserData(data.user);
-      }
-    } catch (err) {
-        // ❌ REMOVE TOAST HERE
-        console.log("User data fetch failed");
-    }
+  const logout = () => {
+    setIsLoggedin(false);
+    setUserData(null);
   };
-
-  const logout = async () => {
-    try {
-      await api.post("/logout");
-    } finally {
-      setIsLoggedin(false);
-      setUserData(null);
-    }
-  };
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
 
   return (
     <AppContext.Provider
@@ -56,6 +23,7 @@ export const AppContextProvider = ({ children }) => {
         isLoggedin,
         userData,
         loadingUser,
+        loginSuccess,
         logout,
       }}
     >

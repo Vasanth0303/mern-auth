@@ -44,7 +44,7 @@ const Login = () => {
       // ⭐ LOGIN MODE
       toast.success("Login successful!");
       setIsLoggedin(true);
-      await getUserData();
+      
       navigate("/dashboard");
 
     } catch (error) {
