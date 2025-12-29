@@ -1,62 +1,38 @@
-import React, { createContext, useEffect, useState } from "react";
-import api from "../api";
+import { createContext, useEffect, useState } from "react";
+import api from "../api/api";
 
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const [isLoggedin, setIsLoggedin] = useState(false);
-  const [userData, setUserData] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const checkAuth = async () => {
+  const fetchUser = async () => {
     try {
-      const authRes = await api.get("/is-auth");
-
-      if (authRes.data.success) {
-        setIsLoggedin(true);
-
-        const userRes = await api.get("/data");
-        if (userRes.data.success) {
-          setUserData(userRes.data.user);
-        } else {
-          setUserData(null);
-        }
+      const { data } = await api.get("/is-auth");
+      if (data.success) {
+        setUser(data.user || true);
       } else {
-        setIsLoggedin(false);
-        setUserData(null);
+        setUser(null);
       }
-    } catch {
-      setIsLoggedin(false);
-      setUserData(null);
+    } catch (err) {
+      setUser(null);
     } finally {
-      setLoadingUser(false);
+      setLoading(false);
     }
   };
 
-  // 🔴 MOBILE COOKIE FIX
   useEffect(() => {
-    const timer = setTimeout(() => {
-      checkAuth();
-    }, 500); // ⏳ allow cookie to be ready
-
-    return () => clearTimeout(timer);
+    fetchUser();
   }, []);
-
-  const logout = async () => {
-    try {
-      await api.get("/logout");
-    } catch {}
-    setIsLoggedin(false);
-    setUserData(null);
-  };
 
   return (
     <AppContext.Provider
       value={{
-        isLoggedin,
-        userData,
-        loadingUser,
-        logout,
+        user,
+        setUser,
+        loading,
+        fetchUser,
       }}
     >
       {children}
