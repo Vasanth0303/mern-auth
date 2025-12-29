@@ -24,7 +24,7 @@ router.post("/logout", logoutUser);
 
 // USER
 router.get("/is-auth", userAuth, isAuth);
-router.get("/data", userAuth, getUserData);
+router.get("/me", userAuth, getUserData);
 
 // EMAIL VERIFY (NEEDS LOGIN)
 router.post("/send-verify-otp", userAuth, sendVerifyOtp);
