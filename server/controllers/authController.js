@@ -42,7 +42,7 @@ export const registerUser = async (req, res) => {
 };
 
 // ===========================
-// LOGIN USER
+// LOGIN USER  ✅ FIXED
 // ===========================
 export const loginUser = async (req, res) => {
   try {
@@ -58,10 +58,12 @@ export const loginUser = async (req, res) => {
 
     const token = createToken(user._id);
 
+    // ✅ IMPORTANT FIX FOR RENDER + MOBILE
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: true,              // REQUIRED (HTTPS)
+      sameSite: "none",          // REQUIRED (cross-site)
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({
@@ -74,15 +76,15 @@ export const loginUser = async (req, res) => {
 };
 
 // ===========================
-// LOGOUT
+// LOGOUT  ✅ FIXED
 // ===========================
 export const logoutUser = async (req, res) => {
-  res.clearCookie("token",{
+  res.clearCookie("token", {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-
   });
+
   return res.json({ success: true, message: "Logged out" });
 };
 

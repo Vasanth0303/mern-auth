@@ -8,7 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
-// CONNECT DB
+// DB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB Connected"))
@@ -18,9 +18,10 @@ mongoose
 app.use(express.json());
 app.use(cookieParser());
 
+// ✅ IMPORTANT FIX
 app.use(
   cors({
-    origin: true,        // ✅ allow Render + mobile
+    origin: process.env.CLIENT_URL, // EXACT frontend URL
     credentials: true,
   })
 );
@@ -28,7 +29,7 @@ app.use(
 // ROUTES
 app.use("/api/auth", authRoutes);
 
-// START SERVER (RENDER SAFE)
+// START
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
