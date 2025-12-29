@@ -92,9 +92,11 @@ export const logoutUser = async (req, res) => {
 // CHECK AUTH
 // ===========================
 export const isAuth = async (req, res) => {
-  return res.json({ success: true });
+  return res.json({
+    success: true,
+    userId: req.userId,
+  });
 };
-
 // ===========================
 // GET USER DATA
 // ===========================
