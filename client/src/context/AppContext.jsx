@@ -4,35 +4,59 @@ import api from "../api.js";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
 
-  const fetchUser = async () => {
+  const checkAuth = async () => {
     try {
       const { data } = await api.get("/is-auth");
+
       if (data.success) {
-        setUser(data.user || true);
+        setIsLoggedin(true);
+        await getUserData();
       } else {
-        setUser(null);
+        setIsLoggedin(false);
       }
     } catch (err) {
-      setUser(null);
+      setIsLoggedin(false);
     } finally {
-      setLoading(false);
+      setLoadingUser(false);
+    }
+  };
+
+  const getUserData = async () => {
+    try {
+      const { data } = await api.get("/data");
+      if (data.success) {
+        setUserData(data.user);
+      }
+    } catch (err) {
+        // ❌ REMOVE TOAST HERE
+        console.log("User data fetch failed");
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await api.post("/logout");
+    } finally {
+      setIsLoggedin(false);
+      setUserData(null);
     }
   };
 
   useEffect(() => {
-    fetchUser();
+    checkAuth();
   }, []);
 
   return (
     <AppContext.Provider
       value={{
-        user,
-        setUser,
-        loading,
-        fetchUser,
+        isLoggedin,
+        userData,
+        loadingUser,
+        logout,
       }}
     >
       {children}
